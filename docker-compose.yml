@@ -1,0 +1,107 @@
+version: "3"
+
+services:
+  # The server-a service
+  server-a:
+    # Use the custom server-a image
+    image: crazepiano-server-a:latest
+    # Service dependencies
+    depends_on:
+      rapid-runner-rabbit:
+        condition: service_healthy
+    # Override the command to run the server
+    command: ["./utils/wait-for-it.sh", "rapid-runner-rabbit:5672", "--",  "npm", "run", "start"]
+    # Configuration options applied at build time
+    build:
+      # Name of the Dockerfile (not really necesarry when default name)
+      dockerfile: Dockerfile
+      # Path to the directory containing the Dockerfile
+      context: ./backend/server-a
+    # Expose ports HOST:CONTAINER
+    ports:
+      - 8080:8080
+    # Expose the port to the backend network
+    networks:
+      - backend
+    # Environment variables
+    environment:
+      MONGODB_URI: mongodb://mongo-database:27017/crazepiano
+    # Mount volume for local development hot-reload (uncomment to use)
+    # volumes:
+    #  - ./backend/server-a:/app/backend/server-a
+
+  # The RabbitMQ service
+  rapid-runner-rabbit:
+    # Use the official RabbitMQ image
+    # image: rabbitmq:3-management
+    image: rabbitmq:3.13.1-alpine
+    # Expose ports HOST:CONTAINER
+    # ports:
+      # The management plugin listens on port 15672
+      # - 15672:15672
+    # Expose the port to the backend network
+    expose:
+      - 5672
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    # Networks to join
+    networks:
+      - backend
+
+  server-b:
+    # Use the custom server-b image
+    image: crazepiano-server-b:latest
+    # Service dependencies
+    depends_on:
+      rapid-runner-rabbit:
+        condition: service_healthy
+    command: ["./utils/wait-for-it.sh", "rapid-runner-rabbit:5672", "--",  "npm", "start"]
+    # Configuration options applied at build time
+    build:
+      dockerfile: Dockerfile
+      context: ./backend/server-b
+    # Networks to join
+    networks:
+      - backend
+
+  # Database service
+  mongo-database:
+    # Use the official MongoDB image
+    image: mongo:latest
+    # Mount a volume to store the data
+    volumes:
+      - mongodb:/data/db
+    # Networks to join
+    expose:
+      - 27017
+    networks:
+      - backend
+
+  # Frontend service
+  frontend:
+    # Use the custom frontend image
+    image: crazepiano-frontend:latest
+    # Configuration options applied at build time 
+    build:
+      # Name of the Dockerfile (not really necesarry when default name)
+      dockerfile: Dockerfile
+      # Path to the directory containing the Dockerfile
+      context: ./frontend
+    # Expose ports HOST:CONTAINER
+    ports:
+      - 80:80
+      # - 5173:5173 # For development
+    # Service dependencies
+    depends_on:
+      - server-a
+
+# Networks shared between services
+networks:
+  backend:
+
+# Named volumes shared between services
+volumes:
+  mongodb:
