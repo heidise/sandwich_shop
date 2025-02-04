@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**See the project documentation pdf for more information (under /docs file)!**
+**See the project documentation pdf for more information (under /docs folder)!**
 
 WebDev2 -course project work. Collaborators:
 - Esa Särkelä
