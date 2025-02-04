@@ -1,8 +1,8 @@
-# Crazepiano
+# Web dev course project: Sandwich shop
 
 ## Introduction
 
-**See the project documentation pdf for more information!!**
+**See the project documentation pdf for more information (under /docs file)!**
 
 WebDev2 -course project work. Collaborators:
 - Esa Särkelä
@@ -11,13 +11,9 @@ WebDev2 -course project work. Collaborators:
 
 ## Running the application
 Clone the repository to your local machine
-```
-git clone https://course-gitlab.tuni.fi/compcs510-spring2024/crazepiano.git
-```
+
 Navigate to the root directory of the project
-```
-cd crazepiano
-```
+
 Build Docker images and start the containers
 ```
 docker-compose up  
