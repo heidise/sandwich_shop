@@ -9,6 +9,9 @@ WebDev2 -course project work. Collaborators:
 - Heidi Seppi
 - Mohammed Al-Gburi
 
+https://github.com/user-attachments/assets/ab15db91-800c-4ee4-a121-187262dc58de
+
+
 ## Running the application
 Clone the repository to your local machine
 
